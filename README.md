@@ -26,6 +26,18 @@ Features:
     - Load MQTT connection settings from the Supervisor
   - Enable add-on logging (incl colors & debug by config)
 
+## Discovery and state
+
+Device discovery (`homeassistant/device/.../config`) is published when Home Assistant signals **online** on `homeassistant/status` (after a short debounce).
+By default it is **not retained** (`MQTTClient(discovery_retain=False)`).
+That way the broker does not keep configs after the publisher stops, and removing a device does not require publishing an empty discovery payload.
+Set `discovery_retain=True` on the client if you want the broker to replay discovery on subscribe—clearing removed devices is then your responsibility.
+
+Entity **state** should be retained so Home Assistant gets the latest value when it subscribes to each `state_topic` after discovery.
+`send_state` and the tracker/light state helpers default to `retain=True`; pass `retain=False` when a value must not be replayed.
+JSON attributes and availability are retained by default.
+Do not retain device-trigger events.
+
 ## Why?
 
 This MQTT code was included in several of my home Assistant addons (SMA-EM / Sunsynk).

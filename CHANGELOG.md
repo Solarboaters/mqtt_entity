@@ -4,6 +4,8 @@
 
 ### What's changed
 
+- Entity `send_state` (and tracker/light state helpers) default to **retained** publishes; pass `retain=False` to override.
+- Optional `discovery_retain` on `MQTTClient` (default **false**): retain device discovery configs when set.
 - Debounce `homeassistant/status` **online** by 3s before publishing discovery (fixes MQTT integration reload without a preceding **offline**; #48).
   Each **online** restarts the timer so subscribe races still publish once.
 - Optional `mqtt_republish` / `MQTT_REPUBLISH`: seconds after that debounce for one

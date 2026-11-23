@@ -50,6 +50,8 @@ class MQTTAsyncClient:
     availability_topic: str = ""
     mqtt_republish: int = 0
     """Seconds after HA-online debounce to republish discovery once; 0 disables."""
+    discovery_retain: bool = False
+    """Retain homeassistant/device/.../config; default off to avoid stale configs on the broker."""
     client: AClient = field(init=False, repr=False)
     suppress_exceptions: bool = True
     connect_time: float = field(init=False, repr=False)
@@ -555,7 +557,9 @@ class MQTTClient(MQTTAsyncClient):
             else:
                 self._last_discovery[disco_topic] = disco_payload
                 try:
-                    await self.publish(disco_topic, disco_payload)
+                    await self.publish(
+                        disco_topic, disco_payload, retain=self.discovery_retain
+                    )
                 except Exception:
                     self._last_discovery.pop(disco_topic)
                     raise
